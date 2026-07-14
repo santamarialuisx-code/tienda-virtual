@@ -5,7 +5,6 @@ import { CartHeader } from "@/components/cart/CartHeader";
 import { AuthButton } from "@/components/auth/AuthButton";
 
 const navLinks = [
-  { href: "/", label: "Inicio" },
   { href: "/products", label: "Productos" },
   { href: "/categories", label: "Categorías" },
   { href: "/about", label: "Nosotros" },
@@ -18,19 +17,10 @@ export function Header() {
       className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
       role="banner"
     >
-      <div className="container mx-auto flex h-16 items-center justify-between px-4 gap-4">
-        {/* Logo */}
-        <Link
-          href="/"
-          className="flex items-center space-x-2 shrink-0"
-          aria-label="Tienda Virtual - Inicio"
-        >
-          <span className="text-xl font-bold">Tienda Virtual</span>
-        </Link>
-
-        {/* Desktop Navigation */}
+      <div className="container mx-auto flex h-16 items-center px-4 gap-4">
+        {/* Left: Desktop Navigation */}
         <nav
-          className="hidden md:flex items-center space-x-6"
+          className="hidden md:flex items-center space-x-6 shrink-0"
           aria-label="Navegación principal"
         >
           {navLinks.map((link) => (
@@ -44,13 +34,18 @@ export function Header() {
           ))}
         </nav>
 
-        {/* Search (hidden on small screens, shown via mobile nav) */}
-        <div className="hidden md:flex flex-1 justify-center" role="search">
-          <SearchBar />
-        </div>
+        {/* Center: Logo */}
+        <Link
+          href="/"
+          className="absolute left-1/2 -translate-x-1/2 flex items-center space-x-2"
+          aria-label="Tienda Virtual - Inicio"
+        >
+          <span className="text-xl font-bold">Tienda Virtual</span>
+        </Link>
 
-        {/* Actions */}
-        <div className="flex items-center space-x-1">
+        {/* Right: Search + Actions */}
+        <div className="flex items-center space-x-4 ml-auto">
+          <SearchBar />
           <CartHeader />
           <AuthButton />
           <MobileNav navLinks={navLinks} />
