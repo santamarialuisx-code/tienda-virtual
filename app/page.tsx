@@ -1,4 +1,16 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Tienda Virtual — Tu tienda en línea en Venezuela",
+  description:
+    "Tu tienda en línea con los mejores productos y precios en Venezuela. Envíos a toda Venezuela con pago por PayPal o PagoMóvil.",
+  openGraph: {
+    title: "Tienda Virtual — Tu tienda en línea en Venezuela",
+    description:
+      "Tu tienda en línea con los mejores productos y precios en Venezuela.",
+  },
+};
 
 export default function Home() {
   return (

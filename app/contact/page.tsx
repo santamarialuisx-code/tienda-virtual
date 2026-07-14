@@ -2,7 +2,13 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Contacto",
-  description: "Contáctanos para cualquier consulta",
+  description:
+    "Contáctanos para cualquier consulta. Estamos aquí para ayudarte con tus compras en Tienda Virtual.",
+  openGraph: {
+    title: "Contacto | Tienda Virtual",
+    description:
+      "Contáctanos para cualquier consulta. Estamos aquí para ayudarte.",
+  },
 };
 
 export default function ContactPage() {

@@ -2,7 +2,13 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Nosotros",
-  description: "Conoce más sobre Tienda Virtual",
+  description:
+    "Conoce más sobre Tienda Virtual, tu tienda en línea de confianza en Venezuela con los mejores productos y precios.",
+  openGraph: {
+    title: "Nosotros | Tienda Virtual",
+    description:
+      "Conoce más sobre Tienda Virtual, tu tienda en línea de confianza en Venezuela.",
+  },
 };
 
 export default function AboutPage() {
