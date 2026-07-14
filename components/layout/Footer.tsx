@@ -90,7 +90,7 @@ export function Footer() {
         </div>
 
         <div className="mt-8 border-t pt-6 text-center text-sm text-muted-foreground">
-          &copy; {new Date().getFullYear()} Tienda Virtual. Todos los derechos
+          &copy; 2026 Tienda Virtual. Todos los derechos
           reservados.
         </div>
       </div>
