@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
+import { cacheLife, cacheTag } from "next/cache";
 import { getAllCategories } from "@/lib/sanity/queries";
 import { urlFor } from "@/lib/sanity/image";
 
@@ -9,8 +10,15 @@ export const metadata: Metadata = {
   description: "Explora nuestras categorías de productos",
 };
 
+async function getCachedAllCategories() {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("categories");
+  return getAllCategories();
+}
+
 export default async function CategoriesPage() {
-  const categories = await getAllCategories();
+  const categories = await getCachedAllCategories();
 
   return (
     <div className="container mx-auto px-4 py-8">

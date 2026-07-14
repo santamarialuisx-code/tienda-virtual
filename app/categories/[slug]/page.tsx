@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Image from "next/image";
+import { cacheLife, cacheTag } from "next/cache";
 import { getCategoryBySlug, getProductsByCategory } from "@/lib/sanity/queries";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { Breadcrumbs } from "@/components/product/Breadcrumbs";
@@ -10,11 +11,25 @@ interface CategoryPageProps {
   params: Promise<{ slug: string }>;
 }
 
+async function getCachedCategoryBySlug(slug: string) {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("categories");
+  return getCategoryBySlug(slug);
+}
+
+async function getCachedProductsByCategory(slug: string) {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("categories");
+  return getProductsByCategory(slug);
+}
+
 export async function generateMetadata({
   params,
 }: CategoryPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const category = await getCategoryBySlug(slug);
+  const category = await getCachedCategoryBySlug(slug);
 
   if (!category) {
     return { title: "Categoría no encontrada" };
@@ -35,13 +50,13 @@ export default async function CategoryDetailPage({
   params,
 }: CategoryPageProps) {
   const { slug } = await params;
-  const category = await getCategoryBySlug(slug);
+  const category = await getCachedCategoryBySlug(slug);
 
   if (!category) {
     notFound();
   }
 
-  const { products, total } = await getProductsByCategory(slug);
+  const { products, total } = await getCachedProductsByCategory(slug);
 
   return (
     <div className="container mx-auto px-4 py-8">

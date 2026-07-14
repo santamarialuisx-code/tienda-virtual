@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { cacheLife, cacheTag } from "next/cache";
 import { getServerSession } from "@/lib/auth/helpers";
 import { getOrdersByEmail } from "@/lib/sanity/queries";
 import { Button } from "@/components/ui/button";
@@ -24,6 +25,13 @@ const statusLabels: Record<string, string> = {
   cancelled: "Cancelado",
 };
 
+async function getCachedOrdersByEmail(email: string, page: number, limit: number) {
+  "use cache";
+  cacheLife({ stale: 300, revalidate: 300 });
+  cacheTag("user-data");
+  return getOrdersByEmail(email, page, limit);
+}
+
 export default async function AccountOrdersPage() {
   const session = await getServerSession();
   
@@ -31,7 +39,7 @@ export default async function AccountOrdersPage() {
     redirect("/auth/login");
   }
   
-  const { orders, total } = await getOrdersByEmail(session.user.email!, 1, 100);
+  const { orders, total } = await getCachedOrdersByEmail(session.user.email!, 1, 100);
   
   return (
     <div className="container mx-auto px-4 py-8">

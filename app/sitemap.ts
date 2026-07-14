@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { cacheLife, cacheTag } from "next/cache";
 import { client } from "@/lib/sanity/client";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://tienda-virtual.vercel.app";
@@ -7,6 +8,9 @@ const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://tienda-virtual.ver
 const hasSanityConfig = !!process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
 
 async function getProducts(): Promise<MetadataRoute.Sitemap> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("products");
   if (!hasSanityConfig) return [];
   try {
     const products = await client.fetch<{ slug: string; updatedAt: string }[]>(
@@ -28,6 +32,9 @@ async function getProducts(): Promise<MetadataRoute.Sitemap> {
 }
 
 async function getCategories(): Promise<MetadataRoute.Sitemap> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("categories");
   if (!hasSanityConfig) return [];
   try {
     const categories = await client.fetch<{ slug: string; updatedAt: string }[]>(

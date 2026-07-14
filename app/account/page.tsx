@@ -1,9 +1,30 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { cacheLife, cacheTag } from "next/cache";
 import { getServerSession } from "@/lib/auth/helpers";
 import { client } from "@/lib/sanity/client";
 import { Button } from "@/components/ui/button";
 import { signOut } from "@/lib/auth/config";
+
+async function getCachedUser(userId: string) {
+  "use cache";
+  cacheLife({ stale: 300, revalidate: 300 });
+  cacheTag("user-data");
+  const query = `*[_type == "user" && _id == $id][0] {
+    _id,
+    email,
+    name,
+    role,
+    createdAt
+  }`;
+  return client.fetch<{
+    _id: string;
+    email: string;
+    name: string;
+    role: string;
+    createdAt: string;
+  }>(query, { id: userId });
+}
 
 export default async function AccountPage() {
   const session = await getServerSession();
@@ -12,22 +33,7 @@ export default async function AccountPage() {
     redirect("/auth/login");
   }
   
-  // Fetch user details from Sanity
-  const query = `*[_type == "user" && _id == $id][0] {
-    _id,
-    email,
-    name,
-    role,
-    createdAt
-  }`;
-  
-  const user = await client.fetch<{
-    _id: string;
-    email: string;
-    name: string;
-    role: string;
-    createdAt: string;
-  }>(query, { id: session.user.id });
+  const user = await getCachedUser(session.user.id);
   
   if (!user) {
     redirect("/auth/login");

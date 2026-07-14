@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import { cacheLife, cacheTag } from "next/cache";
 import { getProductBySlug, getRelatedProducts } from "@/lib/sanity/queries";
 import { ProductDetail } from "@/components/product/ProductDetail";
 import { ProductGrid } from "@/components/product/ProductGrid";
@@ -8,11 +9,25 @@ interface ProductPageProps {
   params: Promise<{ slug: string }>;
 }
 
+async function getCachedProductBySlug(slug: string) {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("products");
+  return getProductBySlug(slug);
+}
+
+async function getCachedRelatedProducts(categorySlug: string, excludeId: string) {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("products");
+  return getRelatedProducts(categorySlug, excludeId);
+}
+
 export async function generateMetadata({
   params,
 }: ProductPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const product = await getProductBySlug(slug);
+  const product = await getCachedProductBySlug(slug);
 
   if (!product) {
     return { title: "Producto no encontrado" };
@@ -43,7 +58,7 @@ export default async function ProductDetailPage({
   params,
 }: ProductPageProps) {
   const { slug } = await params;
-  const product = await getProductBySlug(slug);
+  const product = await getCachedProductBySlug(slug);
 
   if (!product) {
     notFound();
@@ -52,7 +67,7 @@ export default async function ProductDetailPage({
   // Fetch related products
   let relatedProducts: Awaited<ReturnType<typeof getRelatedProducts>> = [];
   if (product.category?.slug?.current) {
-    relatedProducts = await getRelatedProducts(
+    relatedProducts = await getCachedRelatedProducts(
       product.category.slug.current,
       product._id
     );
