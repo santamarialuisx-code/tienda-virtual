@@ -2,14 +2,14 @@ import { defineField, defineType } from "sanity";
 
 export default defineType({
   name: "category",
-  title: "Category",
+  title: "Categoría",
   type: "document",
   fields: [
     defineField({
       name: "name",
-      title: "Name",
+      title: "Nombre",
       type: "string",
-      validation: (Rule) => Rule.required(),
+      validation: (Rule) => Rule.required().error("El nombre es obligatorio"),
     }),
     defineField({
       name: "slug",
@@ -20,21 +20,49 @@ export default defineType({
     }),
     defineField({
       name: "description",
-      title: "Description",
+      title: "Descripción",
       type: "text",
     }),
     defineField({
       name: "image",
-      title: "Image",
+      title: "Imagen",
       type: "image",
       options: { hotspot: true },
+      fields: [
+        {
+          name: "alt",
+          title: "Texto alternativo",
+          type: "string",
+          description: "Descripción de la imagen para accesibilidad",
+        },
+      ],
     }),
     defineField({
       name: "parent",
-      title: "Parent Category",
+      title: "Categoría Padre",
       type: "reference",
       to: [{ type: "category" }],
+      description: "Opcional: crea subcategorías anidadas",
     }),
+    defineField({
+      name: "sortOrder",
+      title: "Orden",
+      type: "number",
+      initialValue: 0,
+      description: "Número de orden para mostrar en la tienda (menor = primero)",
+    }),
+  ],
+  orderings: [
+    {
+      title: "Nombre A-Z",
+      name: "nameAsc",
+      by: [{ field: "name", direction: "asc" }],
+    },
+    {
+      title: "Orden",
+      name: "sortOrderAsc",
+      by: [{ field: "sortOrder", direction: "asc" }],
+    },
   ],
   preview: {
     select: {

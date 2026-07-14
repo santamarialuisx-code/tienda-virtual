@@ -2,23 +2,23 @@ import { defineField, defineType } from "sanity";
 
 export default defineType({
   name: "order",
-  title: "Order",
+  title: "Pedido",
   type: "document",
   fields: [
     defineField({
       name: "customerEmail",
-      title: "Customer Email",
+      title: "Email del Cliente",
       type: "string",
       validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: "customerName",
-      title: "Customer Name",
+      title: "Nombre del Cliente",
       type: "string",
     }),
     defineField({
       name: "items",
-      title: "Items",
+      title: "Productos",
       type: "array",
       of: [{ type: "orderItem" }],
     }),
@@ -29,13 +29,13 @@ export default defineType({
     }),
     defineField({
       name: "shipping",
-      title: "Shipping",
+      title: "Envío",
       type: "number",
       initialValue: 0,
     }),
     defineField({
       name: "tax",
-      title: "Tax",
+      title: "Impuesto",
       type: "number",
       initialValue: 0,
     }),
@@ -46,47 +46,113 @@ export default defineType({
     }),
     defineField({
       name: "status",
-      title: "Status",
+      title: "Estado",
       type: "string",
       options: {
         list: [
-          { title: "Pending", value: "pending" },
-          { title: "Pending Confirmation", value: "pending_confirmation" },
-          { title: "Paid", value: "paid" },
-          { title: "Shipped", value: "shipped" },
-          { title: "Delivered", value: "delivered" },
-          { title: "Cancelled", value: "cancelled" },
+          { title: "⏳ Pendiente", value: "pending" },
+          { title: "🔍 Pend. Confirmación", value: "pending_confirmation" },
+          { title: "✅ Pagado", value: "paid" },
+          { title: "📦 Enviado", value: "shipped" },
+          { title: "🏠 Entregado", value: "delivered" },
+          { title: "❌ Cancelado", value: "cancelled" },
         ],
       },
       initialValue: "pending",
     }),
     defineField({
       name: "paymentMethod",
-      title: "Payment Method",
+      title: "Método de Pago",
       type: "string",
       options: {
         list: [
-          { title: "PayPal", value: "paypal" },
-          { title: "PagoMóvil", value: "pagomovil" },
+          { title: "💳 PayPal", value: "paypal" },
+          { title: "📱 PagoMóvil", value: "pagomovil" },
         ],
       },
     }),
     defineField({
       name: "paypalOrderId",
-      title: "PayPal Order ID",
+      title: "ID de Orden PayPal",
       type: "string",
+      hidden: ({ document }) => document?.paymentMethod !== "paypal",
+    }),
+    defineField({
+      name: "shippingAddress",
+      title: "Dirección de Envío",
+      type: "object",
+      fields: [
+        defineField({
+          name: "address",
+          title: "Dirección",
+          type: "string",
+        }),
+        defineField({
+          name: "city",
+          title: "Ciudad",
+          type: "string",
+        }),
+        defineField({
+          name: "state",
+          title: "Estado",
+          type: "string",
+        }),
+        defineField({
+          name: "phone",
+          title: "Teléfono",
+          type: "string",
+        }),
+      ],
+    }),
+    defineField({
+      name: "notes",
+      title: "Notas",
+      type: "text",
+      description: "Notas internas del administrador sobre el pedido",
     }),
     defineField({
       name: "createdAt",
-      title: "Created At",
+      title: "Fecha del Pedido",
       type: "datetime",
       initialValue: () => new Date().toISOString(),
     }),
+  ],
+  orderings: [
+    {
+      title: "Más recientes",
+      name: "createdAtDesc",
+      by: [{ field: "createdAt", direction: "desc" }],
+    },
+    {
+      title: "Total: mayor a menor",
+      name: "totalDesc",
+      by: [{ field: "total", direction: "desc" }],
+    },
+    {
+      title: "Estado",
+      name: "statusAsc",
+      by: [{ field: "status", direction: "asc" }],
+    },
   ],
   preview: {
     select: {
       title: "customerEmail",
       subtitle: "status",
+      media: "items.0.productName",
+    },
+    prepare(selection) {
+      const statusLabels: Record<string, string> = {
+        pending: "⏳ Pendiente",
+        pending_confirmation: "🔍 Pend. Confirmación",
+        paid: "✅ Pagado",
+        shipped: "📦 Enviado",
+        delivered: "🏠 Entregado",
+        cancelled: "❌ Cancelado",
+      };
+      return {
+        title: selection.title || "Sin email",
+        subtitle: statusLabels[selection.subtitle as string] || selection.subtitle,
+      };
     },
   },
 });
