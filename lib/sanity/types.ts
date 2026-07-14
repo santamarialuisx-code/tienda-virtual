@@ -9,7 +9,44 @@ export interface Product {
   variants?: ProductVariant[];
   stock: number;
   isActive: boolean;
+  brand?: string;
+  tags?: string[];
+  featured?: boolean;
   createdAt: string;
+}
+
+export interface ProductListItem {
+  _id: string;
+  name: string;
+  slug: { current: string };
+  price: number;
+  stock: number;
+  images?: SanityImage;
+  category: { name: string; slug: { current: string } };
+  brand?: string;
+  featured?: boolean;
+  createdAt: string;
+}
+
+export interface ProductFilters {
+  category?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  inStock?: boolean;
+  search?: string;
+  sort?: ProductSort;
+  page?: number;
+  limit?: number;
+}
+
+export type ProductSort = "newest" | "price-asc" | "price-desc" | "relevance";
+
+export interface PaginatedProducts {
+  products: ProductListItem[];
+  total: number;
+  page: number;
+  totalPages: number;
+  limit: number;
 }
 
 export interface Category {
