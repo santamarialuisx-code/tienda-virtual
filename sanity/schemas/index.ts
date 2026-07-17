@@ -3,6 +3,7 @@ import category from "./category";
 import productVariant from "./productVariant";
 import order from "./order";
 import orderItem from "./orderItem";
+import collection from "./collection";
 import user from "./user";
 import storeSettings from "./storeSettings";
 
@@ -12,6 +13,7 @@ export const schemas = [
   productVariant,
   order,
   orderItem,
+  collection,
   user,
   storeSettings,
 ];
