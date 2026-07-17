@@ -61,6 +61,36 @@ export default defineType({
       initialValue: "pending",
     }),
     defineField({
+      name: "productionStatus",
+      title: "Estado de producción",
+      type: "string",
+      options: {
+        list: [
+          { title: "⏳ Pendiente", value: "pendiente" },
+          { title: "🏭 En producción", value: "en_produccion" },
+          { title: "✅ Listo", value: "listo" },
+          { title: "📤 Enviado", value: "enviado" },
+        ],
+      },
+      initialValue: "pendiente",
+      description:
+        "Seguimiento del estado de fabricación para pedidos personalizados",
+    }),
+    defineField({
+      name: "source",
+      title: "Origen del pedido",
+      type: "string",
+      options: {
+        list: [
+          { title: "🛒 Checkout", value: "checkout" },
+          { title: "📱 WhatsApp", value: "whatsapp" },
+        ],
+      },
+      initialValue: "checkout",
+      description:
+        "Indica si el pedido fue realizado por checkout o por WhatsApp",
+    }),
+    defineField({
       name: "paymentMethod",
       title: "Método de Pago",
       type: "string",
