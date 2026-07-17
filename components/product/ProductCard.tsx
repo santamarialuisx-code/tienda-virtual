@@ -22,11 +22,14 @@ export function ProductCard({ product }: ProductCardProps) {
     ? urlFor(product.images).width(400).height(400).url()
     : null;
 
+  const isCustomizable = product.personalizationEnabled === true;
+
   const handleAddToCart = (e: React.MouseEvent) => {
-    e.preventDefault(); // Prevent navigation when clicking the button
+    e.preventDefault();
     e.stopPropagation();
 
-    if (product.stock <= 0) return;
+    // Customizable products go to detail page — no direct add-to-cart
+    if (isCustomizable) return;
 
     addItem({
       productId: product._id,
@@ -34,7 +37,6 @@ export function ProductCard({ product }: ProductCardProps) {
       slug: product.slug.current,
       price: product.price,
       image: imageUrl || undefined,
-      stock: product.stock,
     });
 
     showToast(`${product.name} agregado al carrito`);
@@ -74,15 +76,20 @@ export function ProductCard({ product }: ProductCardProps) {
             </div>
           )}
 
-          {/* Out of stock overlay */}
-          {product.stock <= 0 && (
-            <div className="absolute inset-0 bg-background/60 flex items-center justify-center">
-              <Badge variant="destructive">Agotado</Badge>
+          {/* Personalization badge */}
+          {isCustomizable && (
+            <div className="absolute top-2 right-2">
+              <Badge
+                variant="default"
+                className="bg-primary/90 text-primary-foreground backdrop-blur-sm"
+              >
+                Personalizable
+              </Badge>
             </div>
           )}
 
-          {/* Add to cart button */}
-          {product.stock > 0 && (
+          {/* Add to cart button (non-customizable only) */}
+          {!isCustomizable && (
             <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
               <Button
                 size="icon"

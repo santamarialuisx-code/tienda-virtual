@@ -8,12 +8,13 @@ import type {
   Order,
   OrderStatus,
   Collection,
+  SanityImage,
 } from "./types";
 
 const PRODUCT_LIST_FRAGMENT = `{
   _id, name, slug, price, stock, images[0],
   category->{ name, slug },
-  brand, featured, createdAt
+  brand, featured, createdAt, personalizationEnabled
 }`;
 
 // All active products with category (paginated)
@@ -344,6 +345,61 @@ export async function updateOrderStatus(
     .patch(orderId)
     .set({ status })
     .commit();
+}
+
+// ===== Collection Queries =====
+
+export interface CollectionListItem {
+  _id: string;
+  name: string;
+  slug: { current: string };
+  image?: SanityImage;
+  featured?: boolean;
+  productCount: number;
+}
+
+// All active collections for listing (sorted by sortOrder)
+export async function getCollections(): Promise<CollectionListItem[]> {
+  return safeFetch<CollectionListItem[]>(
+    `*[_type == "collection" && isActive == true] | order(sortOrder asc) {
+      _id, name, slug, image, featured, "productCount": count(products)
+    }`
+  );
+}
+
+// Collection detail by slug with populated products
+export async function getCollectionBySlug(
+  slug: string
+): Promise<(Collection & { products: ProductListItem[] }) | null> {
+  try {
+    if (!process.env.NEXT_PUBLIC_SANITY_PROJECT_ID) return null;
+    return await client.fetch(
+      `*[_type == "collection" && slug.current == $slug && isActive == true][0] {
+        _id, name, slug, description, image, featured, sortOrder,
+        products[]-> {
+          _id, name, slug, price, stock, images[0],
+          category->{ name, slug },
+          brand, featured, createdAt, personalizationEnabled
+        }
+      }`,
+      { slug }
+    );
+  } catch {
+    return null;
+  }
+}
+
+// Featured collections for homepage
+export async function getFeaturedCollections(): Promise<
+  Pick<Collection, "_id" | "name" | "slug" | "description" | "image">[]
+> {
+  return safeFetch<
+    Pick<Collection, "_id" | "name" | "slug" | "description" | "image">[]
+  >(
+    `*[_type == "collection" && isActive == true && featured == true] | order(sortOrder asc) {
+      _id, name, slug, description, image
+    }`
+  );
 }
 
 // ===== Admin Queries =====

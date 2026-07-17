@@ -7,8 +7,11 @@ import { Breadcrumbs } from "./Breadcrumbs";
 import { PriceDisplay } from "./PriceDisplay";
 import { QuantitySelector } from "./QuantitySelector";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Toast, useToast } from "@/components/ui/toast";
 import { useCartStore } from "@/lib/store/cart";
+import { WhatsAppButton } from "@/components/cart/WhatsAppButton";
+import { Palette } from "lucide-react";
 import type { Product } from "@/lib/sanity/types";
 
 interface ProductDetailProps {
@@ -21,23 +24,28 @@ export function ProductDetail({ product }: ProductDetailProps) {
   const addItem = useCartStore((state) => state.addItem);
   const { toast, showToast, hideToast } = useToast();
 
-  const inStock = (product.stock ?? 0) > 0;
+  const isCustomizable = product.personalizationEnabled === true;
 
-  // Get current price based on variant
-  const currentPrice = selectedVariant
+  // For non-customizable products: stock-based logic
+  const inStock = isCustomizable || (product.stock ?? 0) > 0;
+
+  // Get current price based on variant (non-customizable only)
+  const currentPrice = !isCustomizable && selectedVariant
     ? product.variants?.find((v) => v.name === selectedVariant)?.price ||
       product.price
     : product.price;
 
-  // Get current stock based on variant
-  const currentStock = selectedVariant
-    ? product.variants?.find((v) => v.name === selectedVariant)?.stock ??
-      product.stock ??
-      0
-    : product.stock ?? 0;
+  // Get current stock based on variant (non-customizable only)
+  const currentStock = !isCustomizable
+    ? selectedVariant
+      ? product.variants?.find((v) => v.name === selectedVariant)?.stock ??
+        product.stock ??
+        0
+      : product.stock ?? 0
+    : 0;
 
   const handleAddToCart = () => {
-    if ((currentStock ?? 0) <= 0) return;
+    if (isCustomizable || (currentStock ?? 0) <= 0) return;
 
     addItem(
       {
@@ -111,25 +119,57 @@ export function ProductDetail({ product }: ProductDetailProps) {
           {/* Price */}
           <PriceDisplay
             priceUSD={currentPrice}
-            showToggle
+            showToggle={!isCustomizable}
             className="text-2xl font-bold"
           />
 
-          {/* Stock */}
-          <div>
-            {(currentStock ?? 0) > 0 ? (
-              <span className="text-sm text-green-600 dark:text-green-400">
-                ✓ En stock ({currentStock} disponibles)
-              </span>
-            ) : (
-              <span className="text-sm text-red-600 dark:text-red-400">
-                ✗ Agotado
-              </span>
-            )}
-          </div>
+          {/* Customizable product CTA */}
+          {isCustomizable && (
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <Badge
+                  variant="default"
+                  className="bg-primary/90 text-primary-foreground"
+                >
+                  <Palette className="mr-1 h-3 w-3" />
+                  Personalizable
+                </Badge>
+              </div>
 
-          {/* Variants */}
-          {product.variants && product.variants.length > 0 && (
+              <p className="text-sm text-muted-foreground">
+                Este producto se personaliza según tu diseño. Elegí los colores,
+                tallas y agregá texto personalizado.
+              </p>
+
+              {/* Placeholder: CustomizationWizard will be rendered here when PR 2 is integrated */}
+              <div className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">
+                Wizard de personalización próximamente
+              </div>
+
+              <WhatsAppButton
+                productName={product.name}
+                className="w-full"
+              />
+            </div>
+          )}
+
+          {/* Stock (non-customizable) */}
+          {!isCustomizable && (
+            <div>
+              {(currentStock ?? 0) > 0 ? (
+                <span className="text-sm text-green-600 dark:text-green-400">
+                  ✓ En stock ({currentStock} disponibles)
+                </span>
+              ) : (
+                <span className="text-sm text-red-600 dark:text-red-400">
+                  ✗ Agotado
+                </span>
+              )}
+            </div>
+          )}
+
+          {/* Variants (non-customizable) */}
+          {!isCustomizable && product.variants && product.variants.length > 0 && (
             <VariantSelector
               variants={product.variants}
               onVariantSelect={(variant) =>
@@ -138,34 +178,38 @@ export function ProductDetail({ product }: ProductDetailProps) {
             />
           )}
 
-          {/* Quantity and Add to Cart */}
-          {inStock && (
-            <div className="space-y-4">
-              <div className="flex items-center gap-4">
-                <span className="text-sm font-medium">Cantidad:</span>
-                <QuantitySelector
-                  value={quantity}
-                  onChange={setQuantity}
-                  min={1}
-                  max={currentStock ?? 0}
-                />
-              </div>
+          {/* Quantity and Add to Cart (non-customizable) */}
+          {!isCustomizable && (
+            <>
+              {inStock && (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-4">
+                    <span className="text-sm font-medium">Cantidad:</span>
+                    <QuantitySelector
+                      value={quantity}
+                      onChange={setQuantity}
+                      min={1}
+                      max={currentStock ?? 0}
+                    />
+                  </div>
 
-              <Button
-                size="xl"
-                onClick={handleAddToCart}
-                disabled={(currentStock ?? 0) <= 0}
-                className="w-full"
-              >
-                Agregar al Carrito
-              </Button>
-            </div>
-          )}
+                  <Button
+                    size="xl"
+                    onClick={handleAddToCart}
+                    disabled={(currentStock ?? 0) <= 0}
+                    className="w-full"
+                  >
+                    Agregar al Carrito
+                  </Button>
+                </div>
+              )}
 
-          {!inStock && (
-            <Button size="lg" disabled className="w-full">
-              Agotado
-            </Button>
+              {!inStock && (
+                <Button size="lg" disabled className="w-full">
+                  Agotado
+                </Button>
+              )}
+            </>
           )}
 
           {/* Description */}

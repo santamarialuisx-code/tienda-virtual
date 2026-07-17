@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { FeaturedCollections } from "@/components/collections/FeaturedCollections";
 
 export const metadata: Metadata = {
   title: "Tienda Virtual — Tu tienda en línea en Venezuela",
@@ -80,6 +81,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Featured Collections */}
+      <FeaturedCollections />
 
       {/* CTA Section */}
       <section className="bg-muted/50 py-16">
