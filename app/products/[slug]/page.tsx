@@ -86,7 +86,7 @@ export default async function ProductDetailPage({
       "@type": "Offer",
       price: product.price,
       priceCurrency: "USD",
-      availability: product.stock > 0
+      availability: (product.stock ?? 0) > 0
         ? "https://schema.org/InStock"
         : "https://schema.org/OutOfStock",
     },

@@ -7,13 +7,13 @@ export interface Product {
   images?: SanityImage[];
   category: Category;
   variants?: ProductVariant[];
-  stock: number;
+  /** @deprecated Usar solo para productos de diseño propio con stock físico */
+  stock?: number;
   isActive: boolean;
   brand?: string;
   tags?: string[];
   featured?: boolean;
   createdAt: string;
-  /** @deprecated Usar solo para productos de diseño propio con stock físico */
   personalizationEnabled?: boolean;
   personalizationOptions?: PersonalizationOptions;
 }
@@ -138,12 +138,12 @@ export interface OrderItem {
 }
 
 export type OrderStatus =
-  | "pending"
-  | "pending_confirmation"
-  | "paid"
-  | "shipped"
-  | "delivered"
-  | "cancelled";
+  | "pendiente"
+  | "pendiente_confirmacion"
+  | "pagado"
+  | "enviado"
+  | "entregado"
+  | "cancelado";
 
 export type ProductionStatus =
   | "pendiente"
@@ -171,6 +171,6 @@ export interface CartItem {
   image?: string;
   quantity: number;
   variant?: string;
-  stock: number;
+  stock?: number;
   customization?: CustomizationData;
 }

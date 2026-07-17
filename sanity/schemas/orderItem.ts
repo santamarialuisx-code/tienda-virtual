@@ -2,34 +2,34 @@ import { defineField, defineType } from "sanity";
 
 export default defineType({
   name: "orderItem",
-  title: "Order Item",
+  title: "Item del Pedido",
   type: "object",
   fields: [
     defineField({
       name: "product",
-      title: "Product",
+      title: "Producto",
       type: "reference",
       to: [{ type: "product" }],
     }),
     defineField({
       name: "productName",
-      title: "Product Name",
+      title: "Nombre del producto",
       type: "string",
     }),
     defineField({
       name: "quantity",
-      title: "Quantity",
+      title: "Cantidad",
       type: "number",
       validation: (Rule) => Rule.required().min(1),
     }),
     defineField({
       name: "price",
-      title: "Price",
+      title: "Precio",
       type: "number",
     }),
     defineField({
       name: "variant",
-      title: "Variant",
+      title: "Variante",
       type: "string",
     }),
     defineField({

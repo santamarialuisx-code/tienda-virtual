@@ -10,21 +10,21 @@ import { useCurrency } from "@/app/contexts/CurrencyContext";
 import type { Order, OrderStatus } from "@/lib/sanity/types";
 
 const statusColors: Record<OrderStatus, string> = {
-  pending: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
-  pending_confirmation: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
-  paid: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
-  shipped: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400",
-  delivered: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
-  cancelled: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
+  pendiente: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
+  pendiente_confirmacion: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
+  pagado: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
+  enviado: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400",
+  entregado: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
+  cancelado: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
 };
 
 const statusLabels: Record<OrderStatus, string> = {
-  pending: "Pendiente",
-  pending_confirmation: "Pendiente de Confirmación",
-  paid: "Pagado",
-  shipped: "Enviado",
-  delivered: "Entregado",
-  cancelled: "Cancelado",
+  pendiente: "Pendiente",
+  pendiente_confirmacion: "Pendiente de Confirmación",
+  pagado: "Pagado",
+  enviado: "Enviado",
+  entregado: "Entregado",
+  cancelado: "Cancelado",
 };
 
 export default function OrderHistoryPage() {
@@ -76,12 +76,12 @@ export default function OrderHistoryPage() {
           className="rounded-md border border-input bg-background px-3 py-2 text-sm"
         >
           <option value="all">Todos</option>
-          <option value="pending">Pendientes</option>
-          <option value="pending_confirmation">Pendientes de Confirmación</option>
-          <option value="paid">Pagados</option>
-          <option value="shipped">Enviados</option>
-          <option value="delivered">Entregados</option>
-          <option value="cancelled">Cancelados</option>
+          <option value="pendiente">Pendientes</option>
+          <option value="pendiente_confirmacion">Pendientes de Confirmación</option>
+          <option value="pagado">Pagados</option>
+          <option value="enviado">Enviados</option>
+          <option value="entregado">Entregados</option>
+          <option value="cancelado">Cancelados</option>
         </select>
       </div>
 

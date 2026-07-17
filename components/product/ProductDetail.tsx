@@ -21,7 +21,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
   const addItem = useCartStore((state) => state.addItem);
   const { toast, showToast, hideToast } = useToast();
 
-  const inStock = product.stock > 0;
+  const inStock = (product.stock ?? 0) > 0;
 
   // Get current price based on variant
   const currentPrice = selectedVariant
@@ -31,12 +31,13 @@ export function ProductDetail({ product }: ProductDetailProps) {
 
   // Get current stock based on variant
   const currentStock = selectedVariant
-    ? product.variants?.find((v) => v.name === selectedVariant)?.stock ||
-      product.stock
-    : product.stock;
+    ? product.variants?.find((v) => v.name === selectedVariant)?.stock ??
+      product.stock ??
+      0
+    : product.stock ?? 0;
 
   const handleAddToCart = () => {
-    if (currentStock <= 0) return;
+    if ((currentStock ?? 0) <= 0) return;
 
     addItem(
       {
@@ -48,7 +49,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
           ? `https://cdn.sanity.io/images/${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}/${process.env.NEXT_PUBLIC_SANITY_DATASET}/${product.images[0].asset._ref}`
           : undefined,
         variant: selectedVariant,
-        stock: currentStock,
+        stock: currentStock ?? 0,
       },
       quantity
     );
@@ -116,7 +117,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
 
           {/* Stock */}
           <div>
-            {currentStock > 0 ? (
+            {(currentStock ?? 0) > 0 ? (
               <span className="text-sm text-green-600 dark:text-green-400">
                 ✓ En stock ({currentStock} disponibles)
               </span>
@@ -146,14 +147,14 @@ export function ProductDetail({ product }: ProductDetailProps) {
                   value={quantity}
                   onChange={setQuantity}
                   min={1}
-                  max={currentStock}
+                  max={currentStock ?? 0}
                 />
               </div>
 
               <Button
                 size="xl"
                 onClick={handleAddToCart}
-                disabled={currentStock <= 0}
+                disabled={(currentStock ?? 0) <= 0}
                 className="w-full"
               >
                 Agregar al Carrito
