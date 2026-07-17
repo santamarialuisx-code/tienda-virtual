@@ -13,6 +13,9 @@ export interface Product {
   tags?: string[];
   featured?: boolean;
   createdAt: string;
+  /** @deprecated Usar solo para productos de diseño propio con stock físico */
+  personalizationEnabled?: boolean;
+  personalizationOptions?: PersonalizationOptions;
 }
 
 export interface ProductListItem {
@@ -26,6 +29,7 @@ export interface ProductListItem {
   brand?: string;
   featured?: boolean;
   createdAt: string;
+  personalizationEnabled?: boolean;
 }
 
 export interface ProductFilters {
@@ -40,6 +44,25 @@ export interface ProductFilters {
 }
 
 export type ProductSort = "newest" | "price-asc" | "price-desc" | "relevance";
+
+export interface PersonalizationOptions {
+  colors?: string[];
+  sizes?: string[];
+  complexityTiers?: ComplexityTier[];
+}
+
+export interface ComplexityTier {
+  tier: "basic" | "medium" | "complex";
+  fee: number;
+}
+
+export interface CustomizationData {
+  color?: string;
+  size?: string;
+  text?: string;
+  tier?: "basic" | "medium" | "complex";
+  fee?: number;
+}
 
 export interface PaginatedProducts {
   products: ProductListItem[];
@@ -76,6 +99,18 @@ export interface SanityImage {
   };
 }
 
+export interface Collection {
+  _id: string;
+  name: string;
+  slug: { current: string };
+  description?: string;
+  image?: SanityImage;
+  products?: Product[];
+  isActive: boolean;
+  sortOrder: number;
+  createdAt: string;
+}
+
 export interface Order {
   _id: string;
   customerEmail: string;
@@ -86,6 +121,8 @@ export interface Order {
   tax: number;
   total: number;
   status: OrderStatus;
+  productionStatus: ProductionStatus;
+  source: OrderSource;
   paymentMethod: "paypal" | "pagomovil";
   paypalOrderId?: string;
   createdAt: string;
@@ -97,6 +134,7 @@ export interface OrderItem {
   quantity: number;
   price: number;
   variant?: string;
+  customization?: CustomizationData;
 }
 
 export type OrderStatus =
@@ -106,6 +144,14 @@ export type OrderStatus =
   | "shipped"
   | "delivered"
   | "cancelled";
+
+export type ProductionStatus =
+  | "pendiente"
+  | "en_produccion"
+  | "listo"
+  | "enviado";
+
+export type OrderSource = "checkout" | "whatsapp";
 
 export interface User {
   _id: string;
@@ -126,4 +172,5 @@ export interface CartItem {
   quantity: number;
   variant?: string;
   stock: number;
+  customization?: CustomizationData;
 }

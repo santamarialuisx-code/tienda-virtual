@@ -7,6 +7,7 @@ import type {
   PaginatedProducts,
   Order,
   OrderStatus,
+  Collection,
 } from "./types";
 
 const PRODUCT_LIST_FRAGMENT = `{
