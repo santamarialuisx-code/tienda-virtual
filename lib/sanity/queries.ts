@@ -362,7 +362,8 @@ export interface CollectionListItem {
 export async function getCollections(): Promise<CollectionListItem[]> {
   return safeFetch<CollectionListItem[]>(
     `*[_type == "collection" && isActive == true] | order(sortOrder asc) {
-      _id, name, slug, image, featured, "productCount": count(products)
+      _id, name, slug, image, featured,
+      "productCount": count(products[]._ref in *[_type == "product" && isActive == true]._id)
     }`
   );
 }
@@ -376,7 +377,7 @@ export async function getCollectionBySlug(
     return await client.fetch(
       `*[_type == "collection" && slug.current == $slug && isActive == true][0] {
         _id, name, slug, description, image, featured, sortOrder,
-        products[]-> {
+        products[]->(isActive == true) {
           _id, name, slug, price, stock, images[0],
           category->{ name, slug },
           brand, featured, createdAt, personalizationEnabled
@@ -390,14 +391,11 @@ export async function getCollectionBySlug(
 }
 
 // Featured collections for homepage
-export async function getFeaturedCollections(): Promise<
-  Pick<Collection, "_id" | "name" | "slug" | "description" | "image">[]
-> {
-  return safeFetch<
-    Pick<Collection, "_id" | "name" | "slug" | "description" | "image">[]
-  >(
+export async function getFeaturedCollections(): Promise<CollectionListItem[]> {
+  return safeFetch<CollectionListItem[]>(
     `*[_type == "collection" && isActive == true && featured == true] | order(sortOrder asc) {
-      _id, name, slug, description, image
+      _id, name, slug, description, image,
+      "productCount": count(products[]._ref in *[_type == "product" && isActive == true]._id)
     }`
   );
 }

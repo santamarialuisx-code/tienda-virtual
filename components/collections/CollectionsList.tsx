@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { CollectionCard } from "./CollectionCard";
 import type { CollectionListItem } from "@/lib/sanity/queries";
 
@@ -12,12 +13,12 @@ export function CollectionsList({ collections }: CollectionsListProps) {
         <p className="text-muted-foreground mb-4">
           No hay colecciones disponibles
         </p>
-        <a
+        <Link
           href="/products"
           className="text-primary hover:underline text-sm font-medium"
         >
           Explorar todos los productos
-        </a>
+        </Link>
       </div>
     );
   }

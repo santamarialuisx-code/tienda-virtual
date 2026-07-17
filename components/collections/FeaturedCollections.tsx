@@ -25,7 +25,7 @@ export async function FeaturedCollections() {
           {collections.map((collection) => (
             <CollectionCard
               key={collection._id}
-              collection={{ ...collection, productCount: 0 }}
+              collection={collection}
             />
           ))}
         </div>
