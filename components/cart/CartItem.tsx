@@ -52,9 +52,34 @@ export function CartItem({ item }: CartItemProps) {
                 Variante: {item.variant}
               </p>
             )}
-            <p className="text-xs text-muted-foreground mt-1">
-              Disponibles: {item.stock}
-            </p>
+            {item.stock !== undefined && (
+              <p className="text-xs text-muted-foreground mt-1">
+                Disponibles: {item.stock}
+              </p>
+            )}
+            {item.customization && (
+              <div className="flex flex-wrap gap-2 mt-2">
+                {item.customization.color && (
+                  <span className="inline-flex items-center gap-1 text-xs">
+                    <span
+                      className="h-3 w-3 rounded-full border"
+                      style={{ backgroundColor: item.customization.color }}
+                    />
+                    {item.customization.color}
+                  </span>
+                )}
+                {item.customization.size && (
+                  <span className="inline-flex items-center text-xs bg-secondary px-2 py-0.5 rounded">
+                    {item.customization.size}
+                  </span>
+                )}
+                {item.customization.text && (
+                  <span className="inline-flex items-center text-xs text-muted-foreground truncate max-w-[150px]">
+                    &quot;{item.customization.text}&quot;
+                  </span>
+                )}
+              </div>
+            )}
           </div>
           <Button
             variant="ghost"
@@ -74,10 +99,10 @@ export function CartItem({ item }: CartItemProps) {
               updateQuantity(item.productId, qty, item.variant)
             }
             min={1}
-            max={item.stock}
+            max={item.stock ?? 999}
           />
           <PriceDisplay
-            priceUSD={item.price * item.quantity}
+            priceUSD={(item.price + (item.customization?.fee ?? 0)) * item.quantity}
             className="text-sm font-semibold"
           />
         </div>

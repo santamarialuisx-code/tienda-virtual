@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
+import type { CustomizationData } from "@/lib/sanity/types";
 
 export interface CartItem {
   productId: string;
@@ -9,7 +10,8 @@ export interface CartItem {
   image?: string;
   quantity: number;
   variant?: string;
-  stock: number;
+  stock?: number;
+  customization?: CustomizationData;
 }
 
 export interface CartState {
@@ -54,9 +56,10 @@ export const useCartStore = create<CartState>()(
             // Update existing item quantity
             const updatedItems = [...state.items];
             const existingItem = updatedItems[existingIndex];
+            const maxQuantity = item.stock ?? Infinity;
             const newQuantity = Math.min(
               existingItem.quantity + quantity,
-              item.stock
+              maxQuantity
             );
             updatedItems[existingIndex] = {
               ...existingItem,
@@ -66,10 +69,11 @@ export const useCartStore = create<CartState>()(
           }
 
           // Add new item
+          const maxQuantity = item.stock ?? Infinity;
           return {
             items: [
               ...state.items,
-              { ...item, quantity: Math.min(quantity, item.stock) },
+              { ...item, quantity: Math.min(quantity, maxQuantity) },
             ],
           };
         });
@@ -103,7 +107,7 @@ export const useCartStore = create<CartState>()(
           const item = updatedItems[index];
           updatedItems[index] = {
             ...item,
-            quantity: Math.min(quantity, item.stock),
+            quantity: Math.min(quantity, item.stock ?? Infinity),
           };
           return { items: updatedItems };
         });
@@ -117,7 +121,7 @@ export const useCartStore = create<CartState>()(
         const { items } = get();
         return {
           subtotal: items.reduce(
-            (sum, item) => sum + item.price * item.quantity,
+            (sum, item) => sum + (item.price + (item.customization?.fee ?? 0)) * item.quantity,
             0
           ),
           itemCount: items.reduce((sum, item) => sum + item.quantity, 0),

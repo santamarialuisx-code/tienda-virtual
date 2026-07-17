@@ -5,12 +5,20 @@ import { Button } from "@/components/ui/button";
 import { PriceDisplay } from "@/components/product/PriceDisplay";
 import { useCartStore } from "@/lib/store/cart";
 import { calculateShipping, calculateTax, getOrderTotal } from "@/lib/shipping";
+import { WhatsAppButton } from "./WhatsAppButton";
 
 export function CartSummary() {
   const { items, getTotals } = useCartStore();
   const { subtotal, itemCount } = getTotals();
 
   if (itemCount === 0) return null;
+
+  // Calculate customization fees separately for display
+  const customizationFeeTotal = items.reduce(
+    (sum, item) => sum + (item.customization?.fee ?? 0) * item.quantity,
+    0
+  );
+  const productSubtotal = subtotal - customizationFeeTotal;
 
   const shipping = calculateShipping(subtotal);
   const tax = calculateTax(subtotal);
@@ -25,8 +33,15 @@ export function CartSummary() {
           <span className="text-muted-foreground">
             Subtotal ({itemCount} {itemCount === 1 ? "artículo" : "artículos"})
           </span>
-          <PriceDisplay priceUSD={subtotal} className="font-medium" />
+          <PriceDisplay priceUSD={productSubtotal} className="font-medium" />
         </div>
+
+        {customizationFeeTotal > 0 && (
+          <div className="flex justify-between text-sm">
+            <span className="text-muted-foreground">Tarifa de personalización</span>
+            <PriceDisplay priceUSD={customizationFeeTotal} className="font-medium" />
+          </div>
+        )}
 
         <div className="flex justify-between text-sm">
           <span className="text-muted-foreground">Envío</span>
@@ -57,6 +72,8 @@ export function CartSummary() {
           Ir a Pagar
         </Button>
       </Link>
+
+      <WhatsAppButton items={items} className="w-full" />
 
       <Link
         href="/products"
