@@ -71,6 +71,84 @@ export default defineType({
       type: "number",
       validation: (Rule) => Rule.min(0).error("El stock no puede ser negativo"),
       initialValue: 0,
+      hidden: true,
+      description:
+        "DEPRECATED: Los productos personalizables se fabrican bajo demanda. Usar solo para productos de diseño propio con stock físico.",
+    }),
+    defineField({
+      name: "personalizationEnabled",
+      title: "Personalización habilitada",
+      type: "boolean",
+      initialValue: false,
+      description:
+        "Si está activo, el cliente puede personalizar este producto (elegir color, talla, texto)",
+    }),
+    defineField({
+      name: "personalizationOptions",
+      title: "Opciones de personalización",
+      type: "object",
+      hidden: ({ document }) => !document?.personalizationEnabled,
+      fields: [
+        defineField({
+          name: "colors",
+          title: "Colores disponibles",
+          type: "array",
+          of: [{ type: "string" }],
+          description: "Lista de colores que el cliente puede elegir",
+        }),
+        defineField({
+          name: "sizes",
+          title: "Tallas disponibles",
+          type: "array",
+          of: [{ type: "string" }],
+          description: "Lista de tallas disponibles para este producto",
+        }),
+        defineField({
+          name: "complexityTiers",
+          title: "Tiers de complejidad",
+          type: "array",
+          of: [
+            {
+              type: "object",
+              fields: [
+                defineField({
+                  name: "tier",
+                  title: "Tier",
+                  type: "string",
+                  options: {
+                    list: [
+                      { title: "Básico", value: "basic" },
+                      { title: "Medio", value: "medium" },
+                      { title: "Complejo", value: "complex" },
+                    ],
+                  },
+                  validation: (Rule) => Rule.required(),
+                }),
+                defineField({
+                  name: "fee",
+                  title: "Cargo adicional (USD)",
+                  type: "number",
+                  validation: (Rule) => Rule.required().min(0),
+                }),
+              ],
+              preview: {
+                select: {
+                  title: "tier",
+                  subtitle: "fee",
+                },
+                prepare(selection) {
+                  return {
+                    title: selection.title,
+                    subtitle: `$${selection.subtitle} USD`,
+                  };
+                },
+              },
+            },
+          ],
+          description:
+            "Niveles de complejidad con sus respectivos cargos adicionales",
+        }),
+      ],
     }),
     defineField({
       name: "brand",
