@@ -1,5 +1,13 @@
 import type { CustomizationData } from "@/lib/sanity/types";
 import type { CartItem } from "@/lib/store/cart";
+import { TIER_LABELS } from "@/lib/constants";
+
+/** Tier labels for WhatsApp messages (feminine form) */
+const WA_TIER_LABELS: Record<string, string> = {
+  basic: "Básica",
+  medium: "Media",
+  complex: "Compleja",
+};
 
 /**
  * Generates a WhatsApp deep link with a pre-filled message.
@@ -34,13 +42,8 @@ export function generateProductMessage(
     message += `\nTexto: "${customization.text}"`;
   }
   if (customization?.tier) {
-    const tierLabels: Record<string, string> = {
-      basic: "Básica",
-      medium: "Media",
-      complex: "Compleja",
-    };
     const fee = customization.fee ? ` (+$${customization.fee.toFixed(2)})` : "";
-    message += `\nComplejidad: ${tierLabels[customization.tier]}${fee}`;
+    message += `\nComplejidad: ${WA_TIER_LABELS[customization.tier]}${fee}`;
   }
 
   return message;
@@ -95,12 +98,12 @@ export function generateCartMessage(items: CartItem[]): string {
         details.push(`Texto: "${item.customization.text}"`);
       }
       if (item.customization.tier) {
-        const tierLabels: Record<string, string> = {
-          basic: "Básica",
-          medium: "Media",
-          complex: "Compleja",
-        };
-        details.push(`Complejidad: ${tierLabels[item.customization.tier]}`);
+        const fee = item.customization.fee
+          ? ` (+$${item.customization.fee.toFixed(2)})`
+          : "";
+        details.push(
+          `Complejidad: ${WA_TIER_LABELS[item.customization.tier]}${fee}`
+        );
       }
       if (details.length > 0) {
         message += `   ${details.join(" | ")}\n`;

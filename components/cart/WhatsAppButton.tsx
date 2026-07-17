@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { MessageCircle } from "lucide-react";
 import { generateProductWhatsAppLink, generateCartWhatsAppLink } from "@/lib/whatsapp";
@@ -25,6 +26,8 @@ interface CartWhatsAppButtonProps extends WhatsAppButtonBaseProps {
 type WhatsAppButtonProps = ProductWhatsAppButtonProps | CartWhatsAppButtonProps;
 
 export function WhatsAppButton(props: WhatsAppButtonProps) {
+  const isConfigured = !!process.env.NEXT_PUBLIC_WHATSAPP_PHONE;
+
   const handleClick = () => {
     let link: string | null = null;
     if ("items" in props && props.items) {
@@ -42,6 +45,8 @@ export function WhatsAppButton(props: WhatsAppButtonProps) {
       variant="outline"
       size="lg"
       onClick={handleClick}
+      disabled={!isConfigured}
+      title={!isConfigured ? "WhatsApp no configurado. Agregá NEXT_PUBLIC_WHATSAPP_PHONE en .env" : undefined}
       className={props.className}
     >
       <MessageCircle className="mr-2 h-5 w-5" />
