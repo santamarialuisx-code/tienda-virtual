@@ -18,13 +18,16 @@ export function CustomTextInput({
   const charCount = value.length;
   const isOverLimit = charCount > maxLength;
 
+  const textareaId = "custom-text-input";
+
   return (
     <div>
-      <label className="text-sm font-medium mb-2 block">
+      <label htmlFor={textareaId} className="text-sm font-medium mb-2 block">
         Texto personalizado
       </label>
       <div className="relative">
         <textarea
+          id={textareaId}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           maxLength={maxLength}

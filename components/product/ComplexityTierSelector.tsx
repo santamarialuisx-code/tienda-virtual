@@ -2,6 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { formatUSD } from "@/lib/currency";
+import { TIER_LABELS, TIER_DESCRIPTIONS } from "@/lib/constants";
 import type { ComplexityTier } from "@/lib/sanity/types";
 
 interface ComplexityTierSelectorProps {
@@ -9,18 +10,6 @@ interface ComplexityTierSelectorProps {
   selectedTier: string | undefined;
   onSelect: (tier: string, fee: number) => void;
 }
-
-const TIER_LABELS: Record<string, string> = {
-  basic: "Básico",
-  medium: "Medio",
-  complex: "Complejo",
-};
-
-const TIER_DESCRIPTIONS: Record<string, string> = {
-  basic: "Diseño simple con pocos detalles",
-  medium: "Diseño con nivel medio de detalle",
-  complex: "Diseño con alto nivel de detalle y complejidad",
-};
 
 export function ComplexityTierSelector({
   tiers,

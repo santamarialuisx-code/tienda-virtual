@@ -1,18 +1,13 @@
 "use client";
 
 import { formatUSD } from "@/lib/currency";
+import { TIER_LABELS } from "@/lib/constants";
 import type { CustomizationData } from "@/lib/sanity/types";
 
 interface CustomizationReviewProps {
   customization: CustomizationData;
   basePrice: number;
 }
-
-const TIER_LABELS: Record<string, string> = {
-  basic: "Básico",
-  medium: "Medio",
-  complex: "Complejo",
-};
 
 export function CustomizationReview({
   customization,
@@ -27,8 +22,6 @@ export function CustomizationReview({
   if (!hasData) {
     return null;
   }
-
-  const total = basePrice + (customization.fee ?? 0);
 
   return (
     <div className="rounded-lg border p-4 space-y-2">
@@ -68,10 +61,6 @@ export function CustomizationReview({
           </div>
         )}
       </dl>
-      <div className="flex justify-between font-bold text-base pt-2 border-t">
-        <span>Total</span>
-        <span>{formatUSD(total)}</span>
-      </div>
     </div>
   );
 }
