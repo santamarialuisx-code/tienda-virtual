@@ -104,3 +104,11 @@ export const venezuelanBanks = [
   "Banco Popular",
   "Banco Privado de Arrendamiento Mercantil",
 ];
+
+// Customization text validation
+export const customizationTextSchema = z
+  .string()
+  .max(100, "El texto no puede superar los 100 caracteres")
+  .optional();
+
+export type CustomizationText = z.infer<typeof customizationTextSchema>;
