@@ -57,10 +57,10 @@ describe("ProductCard", () => {
     expect(screen.getByText("TestBrand")).toBeTruthy();
   });
 
-  it("renders out of stock overlay when stock is 0", () => {
-    const outOfStockProduct = { ...mockProduct, stock: 0 };
-    render(React.createElement(ProductCard, { product: outOfStockProduct }));
-    expect(screen.getByText("Agotado")).toBeTruthy();
+  it("renders personalization badge when product is customizable", () => {
+    const customizableProduct = { ...mockProduct, personalizationEnabled: true };
+    render(React.createElement(ProductCard, { product: customizableProduct }));
+    expect(screen.getByText("Personalizable")).toBeTruthy();
   });
 
   it("links to product detail page", () => {
